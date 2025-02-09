@@ -22,7 +22,7 @@ export function Community() {
         toast({
           variant: "destructive",
           title: "Error",
-          description: error.message,
+          description: (error as Error).message,
         })
       } finally {
         setLoading(false)
@@ -50,7 +50,7 @@ export function Community() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: (error as Error).message,
       })
     }
   }

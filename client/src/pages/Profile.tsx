@@ -1,127 +1,158 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Trophy, Medal, Star, Award } from "lucide-react"
+import { useState } from "react";
+import { getNutriPlan } from "@/api/gemini";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function Profile() {
-  const achievements = [
-    {
-      id: 1,
-      title: "Zero Waste Pioneer",
-      description: "Prevented 50kg of food waste",
-      icon: Trophy,
-      color: "text-yellow-500"
-    },
-    {
-      id: 2,
-      title: "Sustainability Champion",
-      description: "Maintained 90% eco-friendly purchases for a month",
-      icon: Medal,
-      color: "text-emerald-500"
-    },
-    {
-      id: 3,
-      title: "Nutrition Master",
-      description: "Achieved perfect nutrition score for 2 weeks",
-      icon: Star,
-      color: "text-blue-500"
+  const [profileData, setProfileData] = useState(() => {
+    return JSON.parse(localStorage.getItem("profileData")) || {
+      age: "",
+      height: "",
+      weight: "",
+      sex: "",
+      dietaryRestriction: "",
+      allergies: [],
+    };
+  });
+
+  const handleChange = (e: { target: { name: any; value: any; }; }) => {
+    setProfileData({ ...profileData, [e.target.name]: e.target.value });
+  };
+
+  const handleAllergyChange = (allergy) => {
+    setProfileData((prev) => {
+      const updatedAllergies = prev.allergies.includes(allergy)
+        ? prev.allergies.filter((a: any) => a !== allergy) // Remove if already selected
+        : [...prev.allergies, allergy]; // Add if not selected
+      return { ...prev, allergies: updatedAllergies };
+    });
+  };
+
+  const handleSave = () => {
+    localStorage.setItem("profileData", JSON.stringify(profileData));
+    alert("Profile saved successfully!");
+  };
+
+  const handleLoad = () => {
+    const savedData = JSON.parse(localStorage.getItem("profileData"));
+    if (savedData) {
+      setProfileData(savedData);
     }
-  ]
+  };
 
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Profile</h1>
-      
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Points</CardTitle>
-            <Trophy className="h-4 w-4 text-yellow-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1,234</div>
-            <p className="text-xs text-muted-foreground">+123 this week</p>
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Current Rank</CardTitle>
-            <Award className="h-4 w-4 text-emerald-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">#42</div>
-            <p className="text-xs text-muted-foreground">Top 10%</p>
-          </CardContent>
-        </Card>
+      {/* Personal Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Personal Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium">Age</label>
+              <input
+                type="number"
+                name="age"
+                value={profileData.age}
+                onChange={handleChange}
+                className="w-full mt-1 p-2 border rounded-md"
+                placeholder="Enter age"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Height (cm)</label>
+              <input
+                type="number"
+                name="height"
+                value={profileData.height}
+                onChange={handleChange}
+                className="w-full mt-1 p-2 border rounded-md"
+                placeholder="Enter height"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Weight (kg)</label>
+              <input
+                type="number"
+                name="weight"
+                value={profileData.weight}
+                onChange={handleChange}
+                className="w-full mt-1 p-2 border rounded-md"
+                placeholder="Enter weight"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Sex</label>
+              <select
+                name="sex"
+                value={profileData.sex}
+                onChange={handleChange}
+                className="w-full mt-1 p-2 border rounded-md"
+              >
+                <option value="">Select</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Achievements</CardTitle>
-            <Medal className="h-4 w-4 text-blue-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">15</div>
-            <p className="text-xs text-muted-foreground">3 new this month</p>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Dietary Restriction */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Dietary Restriction</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <select
+            name="dietaryRestriction"
+            value={profileData.dietaryRestriction}
+            onChange={handleChange}
+            className="w-full mt-1 p-2 border rounded-md"
+          >
+            <option value="">Select</option>
+            <option value="Vegetarian">Vegetarian</option>
+            <option value="Pescetarian">Pescetarian</option>
+            <option value="Vegan">Vegan</option>
+            <option value="Dairy-Free">Dairy-Free</option>
+            <option value="Gluten-Free">Gluten-Free</option>
+            <option value="Paleo">Paleo</option>
+            <option value="Raw Food">Raw Food</option>
+            <option value="Keto">Keto</option>
+          </select>
+        </CardContent>
+      </Card>
 
-      <Tabs defaultValue="stats">
-        <TabsList>
-          <TabsTrigger value="stats">Statistics</TabsTrigger>
-          <TabsTrigger value="achievements">Achievements</TabsTrigger>
-        </TabsList>
-        <TabsContent value="stats" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Sustainability Progress</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span>Food Waste Reduction</span>
-                  <span>85%</span>
-                </div>
-                <Progress value={85} />
-              </div>
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span>Eco-friendly Purchases</span>
-                  <span>72%</span>
-                </div>
-                <Progress value={72} />
-              </div>
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span>Nutrition Score</span>
-                  <span>90%</span>
-                </div>
-                <Progress value={90} />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="achievements" className="space-y-4">
-          {achievements.map((achievement) => (
-            <Card key={achievement.id}>
-              <CardContent className="flex items-center space-x-4 py-4">
-                <achievement.icon className={`h-8 w-8 ${achievement.color}`} />
-                <div>
-                  <h3 className="font-medium">{achievement.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {achievement.description}
-                  </p>
-                </div>
-                <Badge variant="secondary" className="ml-auto">
-                  Earned
-                </Badge>
-              </CardContent>
-            </Card>
+      {/* Food Allergies (Multi-Select) */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Food Allergies</CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-2 gap-2">
+          {["Milk", "Eggs", "Nuts", "Wheat", "Soy", "Seafood"].map((allergy) => (
+            <label key={allergy} className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={profileData.allergies.includes(allergy)}
+                onChange={() => handleAllergyChange(allergy)}
+                className="w-4 h-4"
+              />
+              <span>{allergy}</span>
+            </label>
           ))}
-        </TabsContent>
-      </Tabs>
+        </CardContent>
+      </Card>
+
+      <div className="flex gap-4">
+        <Button onClick={handleSave}>Save Profile</Button>
+        <Button variant="outline" onClick={handleLoad}>
+          Load Profile
+        </Button>
+      </div>
     </div>
-  )
+  );
 }

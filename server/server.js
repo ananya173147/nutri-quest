@@ -9,6 +9,9 @@ const authRoutes = require("./routes/authRoutes");
 const { connectDB } = require("./config/database");
 const challengeRoutes = require("./routes/challengeRoutes");
 const inventoryRoutes = require("./routes/inventoryRoutes");
+const nutriPlannerRoutes = require("./routes/nutriPlannerRoutes");
+
+
 const logger = require("./config/logger");
 const cors = require("cors");
 
@@ -18,6 +21,7 @@ const cors = require("cors");
 //}
 
 const app = express();
+app.use("/api/nutriplanner", nutriPlannerRoutes);
 const port = process.env.PORT || 3000;
 // Pretty-print JSON responses
 app.enable('json spaces');

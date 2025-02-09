@@ -12,6 +12,7 @@ import { Profile } from "./pages/Profile"
 import { Leaderboard } from "./pages/Leaderboard"
 import { Challenges } from "./pages/Challenges"
 import { Community } from "./pages/Community"
+import { NutriPlanner } from "./pages/NutriPlanner"
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
               <Route path="leaderboard" element={<Leaderboard />} />
               <Route path="challenges" element={<Challenges />} />
               <Route path="community" element={<Community />} />
+              <Route path="nutriplanner" element={<NutriPlanner />} />
             </Route>
           </Routes>
           <Toaster />

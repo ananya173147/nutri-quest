@@ -21,6 +21,11 @@ const sidebarItems = [
     href: "/inventory"
   },
   {
+    title: "NutriPlanner",
+    icon: UserCircle,
+    href: "/NutriPlanner"
+  },
+  {
     title: "Leaderboard",
     icon: Trophy,
     href: "/leaderboard"
