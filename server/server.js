@@ -9,6 +9,7 @@ const authRoutes = require('./routes/authRoutes');
 const { connectDB } = require('./config/database');
 const challengeRoutes = require('./routes/challengeRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes');
+const nutriPlannerRoutes = require('./routes/nutriPlannerRoutes');
 const logger = require('./config/logger');
 const cors = require('cors');
 

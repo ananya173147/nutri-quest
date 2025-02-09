@@ -1,30 +1,16 @@
 // pages/NutriPlanner.tsx
 
-import { useState, useEffect } from "react";
-import { getInventory } from "@/api/inventory";
+
+import { useInventory } from '@/api/inventory';
 import { NutriPlannerComponent } from "@/components/NutriPlannerComponent";
-import { Button } from "@/components/ui/button";
 
 export function NutriPlanner() {
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchInventory = async () => {
-      setLoading(true);
-      try {
-        const { inventories } = await getInventory();
-        setProducts(inventories);
-      } catch (error) {
-        console.error("Error fetching inventory:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { data: inventory = [], isLoading, error } = useInventory();
 
-    fetchInventory();
-  }, []);
-
+  if (isLoading) return <div>Loading dashboard...</div>;
+  if (error)
+    return <div className="text-red-500">Error loading data.</div>;
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-3xl font-bold">NutriPlanner 🥗</h1>
@@ -32,10 +18,10 @@ export function NutriPlanner() {
         Get a personalized grocery list and meal recommendations based on your current inventory!
       </p>
 
-      {loading ? (
+      {isLoading ? (
         <p>Loading your inventory...</p>
       ) : (
-        <NutriPlannerComponent purchasedProducts={products} />
+        <NutriPlannerComponent purchasedProducts={inventory} />
       )}
     </div>
   );
