@@ -49,6 +49,15 @@ Compete for eco-friendly shopper rankings:
 
 Join us in our mission to reduce food waste and promote healthier, more sustainable grocery shopping habits. Download NutriQuest today and start your journey towards smarter, greener shopping!
 
+## How to run
+Clone the repo. In the project root directory:   
+``
+npm install
+`` 
+  
+``
+npm start
+``
 ## License
 
 This project is licensed under the [MIT License](LICENSE.md).
