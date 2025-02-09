@@ -8,6 +8,7 @@ const basicRoutes = require("./routes/index");
 const authRoutes = require("./routes/authRoutes");
 const { connectDB } = require("./config/database");
 const challengeRoutes = require("./routes/challengeRoutes");
+const inventoryRoutes = require("./routes/inventoryRoutes");
 const logger = require("./config/logger");
 const cors = require("cors");
 
@@ -45,6 +46,9 @@ app.use('/api/auth', authRoutes);
 
 // Challenge Routes
 app.use("/api/challenges", challengeRoutes);
+
+// Inventory Routes
+app.use("/api/inventory", inventoryRoutes);
 
 // If no routes handled the request, it's a 404
 app.use((req, res, next) => {

@@ -16,6 +16,7 @@ export type Challenge = {
 export const getChallenges = async (): Promise<{ challenges: Challenge[] }> => {
   try {
     const response = await axios.get(API_BASE_URL);
+    console.log(response.data)
     return response.data;
   } catch (error) {
     throw new Error("Failed to fetch challenges");

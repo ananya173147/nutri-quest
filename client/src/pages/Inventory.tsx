@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useToast } from "@/hooks/useToast"
 import {
   Table,
@@ -26,11 +26,15 @@ export function Inventory() {
   const { toast } = useToast()
   const { register, handleSubmit, reset, setValue } = useForm()
 
+  useEffect(() => {
   const loadInventory = async () => {
     try {
       setLoading(true)
-      const { products } = await getInventory()
-      setProducts(products)
+      
+      const { inventories } = await getInventory()
+      setProducts(inventories)
+      console.log(inventories)
+      
     } catch (error) {
       toast({
         variant: "destructive",
@@ -41,11 +45,13 @@ export function Inventory() {
       setLoading(false)
     }
   }
+  loadInventory()}, [toast]);
+
 
   const onAddProduct = async (data: any) => {
     try {
-      const { product } = await addProduct(data)
-      setProducts([...products, product])
+      const { inventories } = await addProduct(data)
+      setProducts([...products, inventories])
       setIsAddDialogOpen(false)
       reset()
       toast({
@@ -165,7 +171,7 @@ export function Inventory() {
                 <TableCell>
                   <Badge variant={
                     new Date(product.expiryDate) < new Date() ? "destructive" :
-                    new Date(product.expiryDate) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) ? "secondary" :
+                    new Date(product.expiryDate) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) ? "outline" :
                     "default"
                   }>
                     {new Date(product.expiryDate) < new Date() ? "Expired" :

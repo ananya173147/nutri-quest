@@ -1,4 +1,7 @@
 import api from './api';
+import axios from "axios";
+
+const API_BASE_URL = "http://localhost:3000/api/inventory";
 
 export type Product = {
   _id: string;
@@ -8,61 +11,37 @@ export type Product = {
   sustainabilityScore: number;
   nutritionScore: number;
   category: string;
+  calories: string;
+  ingredients: string;
+  status: string;
+  nutritionFacts: string;
 };
 
 // Description: Get user's inventory
 // Endpoint: GET /api/inventory
 // Request: {}
 // Response: { products: Product[] }
-export const getInventory = () => {
-  return new Promise<{ products: Product[] }>((resolve) => {
-    setTimeout(() => {
-      resolve({
-        products: [
-          {
-            _id: '1',
-            name: 'Organic Bananas',
-            expiryDate: '2024-04-10',
-            quantity: 6,
-            sustainabilityScore: 85,
-            nutritionScore: 90,
-            category: 'Fruits'
-          },
-          {
-            _id: '2',
-            name: 'Almond Milk',
-            expiryDate: '2024-04-15',
-            quantity: 2,
-            sustainabilityScore: 70,
-            nutritionScore: 75,
-            category: 'Dairy Alternatives'
-          },
-          {
-            _id: '3',
-            name: 'Whole Grain Bread',
-            expiryDate: '2024-04-05',
-            quantity: 1,
-            sustainabilityScore: 95,
-            nutritionScore: 85,
-            category: 'Bakery'
-          }
-        ]
-      });
-    }, 500);
-  });
+export const getInventory = async (): Promise<{ inventories: Product[] }> => {
+  try {
+    const response = await axios.get(API_BASE_URL);
+    console.log(response.data)
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to fetch challenges");
+  }
 };
 
 // Description: Add product to inventory
 // Endpoint: POST /api/inventory
 // Request: { product: Omit<Product, '_id'> }
 // Response: { product: Product }
-export const addProduct = (product: Omit<Product, '_id'>) => {
-  return new Promise<{ product: Product }>((resolve) => {
+export const addProduct = (inventories: Omit<Product, '_id'>) => {
+  return new Promise<{ inventories: Product }>((resolve) => {
     setTimeout(() => {
       resolve({
-        product: {
+        inventories: {
           _id: Math.random().toString(),
-          ...product
+          ...inventories
         }
       });
     }, 500);
