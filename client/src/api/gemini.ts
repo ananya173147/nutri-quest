@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 export async function getNutriPlan(purchasedProducts: any[]) {
-  const GEMINI_API_KEY = "AIzaSyCXDBYAExCmIh6tVwkXj5YbdoskcLxQ9ac"; //process.env.GEMINI_API_KEY; 
+  const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
   if (!GEMINI_API_KEY) {
     throw new Error("❌ Missing Gemini API key! Please add it to your .env file.");
