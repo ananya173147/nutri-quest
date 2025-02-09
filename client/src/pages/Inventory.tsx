@@ -35,7 +35,7 @@ export function Inventory() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: (error as Error).message,
       })
     } finally {
       setLoading(false)
@@ -56,7 +56,7 @@ export function Inventory() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: (error as Error).message,
       })
     }
   }
@@ -73,7 +73,7 @@ export function Inventory() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: (error as Error).message,
       })
     }
   }
@@ -165,8 +165,8 @@ export function Inventory() {
                 <TableCell>
                   <Badge variant={
                     new Date(product.expiryDate) < new Date() ? "destructive" :
-                    new Date(product.expiryDate) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) ? "warning" :
-                    "success"
+                    new Date(product.expiryDate) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) ? "secondary" :
+                    "default"
                   }>
                     {new Date(product.expiryDate) < new Date() ? "Expired" :
                      new Date(product.expiryDate) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) ? "Expiring Soon" :
