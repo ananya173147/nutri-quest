@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useInventory, useAddProduct, useRemoveProduct } from '@/api/inventory';
 import { useToast } from '@/hooks/useToast';
 import {
   Table,
@@ -9,73 +9,41 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Trash2, Scan } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
+import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import {
-  Product,
-  getInventory,
-  addProduct,
-  removeProduct,
-} from '@/api/inventory';
-import { BarcodeScanner } from '@/components/BarcodeScanner';
+import { ProductScanner } from '@/components/ProductScanner';
+import { useState, useCallback } from 'react';
 
 export function Inventory() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const { data: inventory = [], isLoading, error } = useInventory();
+  const addProductMutation = useAddProduct();
+  const removeProductMutation = useRemoveProduct();
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [scannerOpen, setScannerOpen] = useState(false);
   const { toast } = useToast();
   const { register, handleSubmit, reset, setValue } = useForm();
 
-  // useEffect(() => {
-  // const loadInventory = async () => {
-  //   try {
-  //     setLoading(true)
-
-  //     const { inventories } = await getInventory()
-  //     setProducts(inventories)
-  //     console.log(inventories)
-
-  //   } catch (error) {
-  //     toast({
-  //       variant: "destructive",
-  //       title: "Error",
-  //       description: (error as Error).message,
-  //     })
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
-  // loadInventory()}, [toast]);
-
-  // const onAddProduct = async (data: any) => {
-  //   try {
-  //     const { inventories } = await addProduct(data)
-  //     setProducts([...products, inventories])
-  //     setAddDialogOpen(false)
-  //     reset()
-  // const handleScanResult = useCallback(
-  //   (product: any) => {
-  //     setScannerOpen(false);
-  //     setValue('name', product.product_name);
-  //     setTimeout(() => setAddDialogOpen(true), 100);
-  //   },
-  //   [setValue]
-  // );
+  const handleScanResult = useCallback(
+    (product: any) => {
+      setScannerOpen(false);
+      if (product?.product_name) {
+        setValue('name', product.product_name);
+        setTimeout(() => setAddDialogOpen(true), 100);
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: 'Invalid product scan result',
+        });
+      }
+    },
+    [setValue, toast]
+  );
 
   const onAddProduct = async (data: any) => {
     try {
-      const { product } = await addProduct(data);
-      setProducts((prev) => [...prev, product]);
+      await addProductMutation.mutateAsync(data);
       setAddDialogOpen(false);
       reset();
       toast({
@@ -93,8 +61,7 @@ export function Inventory() {
 
   const onRemoveProduct = async (id: string) => {
     try {
-      await removeProduct(id);
-      setProducts((prev) => prev.filter((p) => p._id !== id));
+      await removeProductMutation.mutateAsync(id);
       toast({
         title: 'Success',
         description: 'Product removed successfully',
@@ -108,68 +75,27 @@ export function Inventory() {
     }
   };
 
+  if (isLoading) return <div>Loading inventory...</div>;
+  if (error)
+    return <div className="text-red-500">Error loading inventory.</div>;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Inventory</h1>
-        <div className="flex gap-2">
-          <Button onClick={() => setScannerOpen(true)}>
-            <Scan className="w-4 h-4 mr-2" />
-            Scan Barcode
-          </Button>
-          <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={() => setAddDialogOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Add Product
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-background">
-              <DialogHeader>
-                <DialogTitle>Add New Product</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit(onAddProduct)} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Product Name</Label>
-                  <Input id="name" {...register('name', { required: true })} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="category">Category</Label>
-                  <Input
-                    id="category"
-                    {...register('category', { required: true })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="quantity">Quantity</Label>
-                  <Input
-                    id="quantity"
-                    type="number"
-                    {...register('quantity', { required: true, min: 1 })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="expiryDate">Expiry Date</Label>
-                  <Input
-                    id="expiryDate"
-                    type="date"
-                    {...register('expiryDate', { required: true })}
-                  />
-                </div>
-                <Button type="submit" className="w-full">
-                  Add Product
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
+        {/* <h1 className="text-3xl font-bold">Inventory</h1> */}
+        {/* <Button
+          className="bg-black text-white px-4 py-2 rounded-md flex items-center"
+          onClick={() => setScannerOpen(true)}
+        >
+          <Scan className="w-4 h-4 mr-2" />
+          Scan Product BarCode
+        </Button> */}
+        <ProductScanner
+          open={scannerOpen}
+          onOpenChange={setScannerOpen}
+          onResult={handleScanResult}
+        />
       </div>
-
-      <BarcodeScanner
-        open={scannerOpen}
-        onOpenChange={setScannerOpen}
-        onResult={handleScanResult}
-      />
 
       <div className="rounded-md border">
         <Table>
@@ -184,7 +110,7 @@ export function Inventory() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product) => (
+            {inventory.map((product) => (
               <TableRow key={product._id}>
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.category}</TableCell>

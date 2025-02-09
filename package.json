@@ -15,10 +15,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@tanstack/react-query": "^5.66.0",
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
     "concurrently": "^9.1.0",
     "react-media-devices": "^1.1.5",
-    "react-zxing": "^2.0.2"
+    "react-zxing": "^2.0.2",
+    "winston": "^3.17.0"
   }
 }

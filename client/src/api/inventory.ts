@@ -1,61 +1,57 @@
 import api from './api';
-import axios from "axios";
+import axios from 'axios';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
-const API_BASE_URL = "http://localhost:3000/api/inventory";
+const API_BASE_URL = 'http://localhost:3000/api/inventory';
 
 export type Product = {
-  _id: string;
-  name: string;
-  expiryDate: string;
-  quantity: number;
-  sustainabilityScore: number;
-  nutritionScore: number;
-  category: string;
-  calories: string;
-  ingredients: string;
-  status: string;
-  nutritionFacts: string;
+  name: string; //product_name
+  expiryDate: string; // user entered in form
+  quantity: number; // user entered in form
+  sustainabilityScore: number; //ecoscore_grade -> a: 100, b: 80, c: 60, d: 40, e: 20
+  nutritionScore: number; //nutriscore_grade -> a: 100, b: 80, c: 60, d: 40, e: 20
+  category: string; // user entered in form
+  calories: string; //energy-kcal
+  ingredients: string; //ingredients -> array of objects
+  status: string; // status -> known
+  nutritionFacts: string; // nutriments -> object
 };
 
-// Description: Get user's inventory
-// Endpoint: GET /api/inventory
-// Request: {}
-// Response: { products: Product[] }
-export const getInventory = async (): Promise<{ inventories: Product[] }> => {
-  try {
-    const response = await axios.get(API_BASE_URL);
-    console.log(response.data)
-    return response.data;
-  } catch (error) {
-    throw new Error("Failed to fetch challenges");
-  }
-};
-
-// Description: Add product to inventory
-// Endpoint: POST /api/inventory
-// Request: { product: Omit<Product, '_id'> }
-// Response: { product: Product }
-export const addProduct = (inventories: Omit<Product, '_id'>) => {
-  return new Promise<{ inventories: Product }>((resolve) => {
-    setTimeout(() => {
-      resolve({
-        inventories: {
-          _id: Math.random().toString(),
-          ...inventories
-        }
-      });
-    }, 500);
+// Fetch inventory
+export const useInventory = () => {
+  return useQuery({
+    queryKey: ['inventory'],
+    queryFn: async () => {
+      const response = await axios.get<{ inventories: Product[] }>(
+        API_BASE_URL
+      );
+      return response.data.inventories;
+    },
   });
 };
 
-// Description: Remove product from inventory
-// Endpoint: DELETE /api/inventory/:id
-// Request: { id: string }
-// Response: { success: boolean }
-export const removeProduct = (id: string) => {
-  return new Promise<{ success: boolean }>((resolve) => {
-    setTimeout(() => {
-      resolve({ success: true });
-    }, 500);
+// Add product mutation
+export const useAddProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (product: Omit<Product, '_id'>) => {
+      const response = await axios.post(API_BASE_URL, product);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['inventory'] });
+    },
+  });
+};
+
+export const useRemoveProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await axios.delete(`http://localhost:3000/api/inventory/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['inventory'] });
+    },
   });
 };

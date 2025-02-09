@@ -4,43 +4,35 @@ import api from './api';
 // Endpoint: GET /api/barcode/:barcode
 // Request: { barcode: string }
 // Response: { product: { product_name: string, nutriments: any, nutrition_grades: string } }
-export const getProductFromBarcode = async (barcode: string) => {
-  // Mocking the response
-  return new Promise<{ product: any }>((resolve) => {
-    setTimeout(() => {
-      resolve({
-        product: {
-          code: barcode,
-          product_name: "Organic Granola",
-          brands: "Nature's Path",
-          quantity: "400g",
-          nutriments: {
-            carbohydrates: 57.5,
-            carbohydrates_100g: 57.5,
-            carbohydrates_unit: "g",
-            carbohydrates_value: 57.5,
-            energy: 2255,
-            "energy-kcal": 539,
-            "energy-kcal_100g": 539,
-            "energy-kcal_unit": "kcal",
-            fat: 23.5,
-            fat_100g: 23.5,
-            fat_unit: "g",
-            proteins: 12.3,
-            proteins_100g: 12.3,
-            proteins_unit: "g",
-            sugars: 26.3,
-            sugars_100g: 26.3,
-            sugars_unit: "g",
-            fiber: 8.5,
-            fiber_100g: 8.5,
-            fiber_unit: "g"
-          },
-          nutrition_grades: "b",
-          sustainability_score: 85,
-          eco_score: "a"
-        }
-      });
-    }, 500);
-  });
-};
+export async function getProductFromBarcode(barcode: string) {
+  try {
+    const response = await fetch(
+      `https://world.openfoodfacts.org/api/v3/product/${barcode}.json`
+    );
+    if (!response.ok) throw new Error('Failed to fetch product');
+
+    const data = await response.json();
+    if (!data.product) throw new Error('Product not found');
+
+    // Extract necessary fields
+    return {
+      name: data.product.product_name ?? '',
+      sustainabilityScore: getScore(data.product.ecoscore_grade),
+      nutritionScore: getScore(data.product.nutriscore_grade),
+      calories: data.product.nutriments?.['energy-kcal']?.toString() ?? '',
+      ingredients:
+        data.product.ingredients?.map((ing: any) => ing.text).join(', ') ?? '',
+      status: data.product.status ?? 'unknown',
+      nutritionFacts: data.product.nutriments ?? {},
+    };
+  } catch (error) {
+    console.error('Error fetching product details:', error);
+    return null;
+  }
+}
+
+// Helper function to convert grades to scores
+function getScore(grade: string): number {
+  const scores: Record<string, number> = { a: 100, b: 80, c: 60, d: 40, e: 20 };
+  return scores[grade] ?? 0;
+}

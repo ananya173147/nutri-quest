@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Camera } from 'lucide-react';
 import { Button } from './ui/button';
+import { getProductFromBarcode } from '@/api/barcode';
 
 interface BarcodeScannerProps {
   onResult: (product: any) => void;
@@ -71,8 +72,9 @@ export function BarcodeScanner({
 
                 try {
                   const response = await getProductFromBarcode(barcodeValue);
-                  if (response.product) {
-                    onResult(response.product);
+                  console.log('Product:', response);
+                  if (response) {
+                    onResult(response);
                     onOpenChange(false);
 
                     // Cleanup
@@ -173,17 +175,4 @@ export function BarcodeScanner({
       </DialogContent>
     </Dialog>
   );
-}
-
-// Helper function to get product from barcode - implement this in your API
-async function getProductFromBarcode(barcode: string) {
-  try {
-    const response = await fetch(
-      `https://world.openfoodfacts.org/api/v3/product/${barcode}.json`
-    );
-    if (!response.ok) throw new Error('Failed to fetch product');
-    return await response.json();
-  } catch (error) {
-    throw new Error('Error fetching product details');
-  }
 }

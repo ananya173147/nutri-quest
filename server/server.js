@@ -1,19 +1,16 @@
 // Load environment variables
-require("dotenv").config();
-const mongoose = require("mongoose");
-const express = require("express");
-const session = require("express-session");
+require('dotenv').config();
+const mongoose = require('mongoose');
+const express = require('express');
+const session = require('express-session');
 const MongoStore = require('connect-mongo');
-const basicRoutes = require("./routes/index");
-const authRoutes = require("./routes/authRoutes");
-const { connectDB } = require("./config/database");
-const challengeRoutes = require("./routes/challengeRoutes");
-const inventoryRoutes = require("./routes/inventoryRoutes");
-const nutriPlannerRoutes = require("./routes/nutriPlannerRoutes");
-
-
-const logger = require("./config/logger");
-const cors = require("cors");
+const basicRoutes = require('./routes/index');
+const authRoutes = require('./routes/authRoutes');
+const { connectDB } = require('./config/database');
+const challengeRoutes = require('./routes/challengeRoutes');
+const inventoryRoutes = require('./routes/inventoryRoutes');
+const logger = require('./config/logger');
+const cors = require('cors');
 
 //if (!process.env.DATABASE_URL) {
 //  logger.error("Error: DATABASE_URL variables in .env missing.");
@@ -21,7 +18,7 @@ const cors = require("cors");
 //}
 
 const app = express();
-app.use("/api/nutriplanner", nutriPlannerRoutes);
+app.use('/api/nutriplanner', nutriPlannerRoutes);
 const port = process.env.PORT || 3000;
 // Pretty-print JSON responses
 app.enable('json spaces');
@@ -38,7 +35,7 @@ app.use(authRoutes);
 // Database connection
 connectDB();
 
-app.on("error", (error) => {
+app.on('error', (error) => {
   logger.error(`Server error: ${error.message}`);
   logger.error(error.stack);
 });
@@ -49,21 +46,21 @@ app.use(basicRoutes);
 app.use('/api/auth', authRoutes);
 
 // Challenge Routes
-app.use("/api/challenges", challengeRoutes);
+app.use('/api/challenges', challengeRoutes);
 
 // Inventory Routes
-app.use("/api/inventory", inventoryRoutes);
+app.use('/api/inventory', inventoryRoutes);
 
 // If no routes handled the request, it's a 404
 app.use((req, res, next) => {
-  res.status(404).send("Page not found.");
+  res.status(404).send('Page not found.');
 });
 
 // Error handling
 app.use((err, req, res, next) => {
   logger.error(`Unhandled application error: ${err.message}`);
   logger.error(error.stack);
-  res.status(500).send("There was an error serving your request.");
+  res.status(500).send('There was an error serving your request.');
 });
 
 app.listen(port, () => {
