@@ -1,64 +1,71 @@
-import { useEffect, useState } from "react"
-import { useToast } from "@/hooks/useToast"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Textarea } from "@/components/ui/textarea"
-import { Heart, MessageCircle, Share2, Cookie, Lightbulb, Trophy } from "lucide-react"
-import { Post, getPosts, createPost } from "@/api/community"
+import { useEffect, useState } from 'react';
+import { useToast } from '@/hooks/useToast';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Heart,
+  MessageCircle,
+  Share2,
+  Cookie,
+  Lightbulb,
+  Trophy,
+} from 'lucide-react';
+import { Post, getPosts, createPost } from '@/api/community';
 
 export function Community() {
-  const [posts, setPosts] = useState<Post[]>([])
-  const [newPost, setNewPost] = useState("")
-  const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [newPost, setNewPost] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        setLoading(true)
-        const { posts } = await getPosts()
-        setPosts(posts)
+        setLoading(true);
+        const { posts } = await getPosts();
+        setPosts(posts);
       } catch (error) {
         toast({
-          variant: "destructive",
-          title: "Error",
+          variant: 'destructive',
+          title: 'Error',
           description: (error as Error).message,
-        })
+        });
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadPosts()
-  }, [toast])
+    loadPosts();
+  }, [toast]);
 
   const handleCreatePost = async () => {
-    if (!newPost.trim()) return
+    if (!newPost.trim()) return;
 
     try {
       const { post } = await createPost({
         content: newPost,
-        type: 'tip'
-      })
-      setPosts([post, ...posts])
-      setNewPost("")
+        type: 'tip',
+      });
+      setPosts([post, ...posts]);
+      setNewPost('');
       toast({
-        title: "Success",
-        description: "Post created successfully",
-      })
+        title: 'Success',
+        description: 'Post created successfully',
+      });
     } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: 'destructive',
+        title: 'Error',
         description: (error as Error).message,
-      })
+      });
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Community</h1>
-      
+
       <Card>
         <CardContent className="pt-6">
           <Textarea
@@ -78,7 +85,9 @@ export function Community() {
               <div className="flex items-center space-x-2">
                 <span className="text-2xl">{post.avatar}</span>
                 <div>
-                  <CardTitle className="text-base font-medium">{post.username}</CardTitle>
+                  <CardTitle className="text-base font-medium">
+                    {post.username}
+                  </CardTitle>
                   <p className="text-sm text-muted-foreground">
                     {new Date(post.createdAt).toLocaleDateString()}
                   </p>
@@ -86,13 +95,13 @@ export function Community() {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="mb-4">{post.content}</p>
+              <p className="mb-2">{post.content}</p>
               {post.images && post.images.length > 0 && (
-                <div className="mb-4">
+                <div className="mb-2">
                   <img
                     src={post.images[0]}
                     alt="Post content"
-                    className="rounded-lg w-full"
+                    className="rounded-lg"
                   />
                 </div>
               )}
@@ -114,5 +123,5 @@ export function Community() {
         ))}
       </div>
     </div>
-  )
+  );
 }

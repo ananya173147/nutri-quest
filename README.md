@@ -1,5 +1,6 @@
 # NutriQuest: Gamified Sustainable Grocery Assistant
-NutriQuest is an AI-powered grocery assistant that makes shopping smarter, healthier, and more sustainable. Developed by team here4food, this innovative app aims to tackle food waste and promote healthier grocery shopping habits.
+
+NutriQuest is an AI-powered grocery assistant that makes shopping smarter, healthier, and more sustainable. Developed by Team Here4Food, this innovative app aims to tackle food waste and promote healthier grocery shopping habits.
 
 ## The Problem
 
@@ -38,28 +39,53 @@ Make smarter, healthier, and greener choices with:
 
 Compete for eco-friendly shopper rankings:
 
-- Leaderboard & Challenges: Track your health and eco-impact; compete with friends and family
-- Eco-Challenges & Rewards: Earn badges and recognition
+- **Leaderboard & Challenges**: Track your health and eco-impact; compete with friends and family
+- **Eco-Challenges & Rewards**: Earn badges and recognition
 
 **Example Challenges:**
-- Green Shopper: Buy 5+ eco-friendly, sustainably sourced products in one trip → Unlock "Eco-Friendly Shopper" badge
-- Smart Grocery Planner: Use AI NutriBalance Planner to create a fully balanced grocery list → Get the "Smart Shopper" badge
+
+- _Green Shopper_: Buy 5+ eco-friendly, sustainably sourced products in one trip → Unlock "Eco-Friendly Shopper" badge
+- _Smart Grocery Planner_: Use AI NutriBalance Planner to create a fully balanced grocery list → Get the "Smart Shopper" badge
+
+## Screenshots
+
+### Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+### Community
+
+![Community](screenshots/community.png)
+
+### Challenges
+
+![Challenges](screenshots/challenges.png)
+
+### Leaderboard
+
+![Leaderboard](screenshots/leaderboard.png)
+
+### NutriPlanner
+
+![NutriPlanner](screenshots/nutriplanner.png)
+
+### Inventory
+
+![Inventory](screenshots/inventory.png)
+
+### Profile
+
+![Profile](screenshots/profile.png)
 
 ## Get Started
 
 Join us in our mission to reduce food waste and promote healthier, more sustainable grocery shopping habits. Download NutriQuest today and start your journey towards smarter, greener shopping!
 
-## How to run
-Clone the repo. In the project root directory:   
-``
+## How to Run
+
+Clone the repo. In the project root directory:
+
+```bash
 npm install
-`` 
-  
-``
 npm start
-``
-## License
-
-This project is licensed under the [MIT License](LICENSE.md).
-
-Let's make grocery shopping a quest for a better future!
+```
